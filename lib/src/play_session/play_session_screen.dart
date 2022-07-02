@@ -84,16 +84,6 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                     Spacer(),
                     Board(),
                     Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => GoRouter.of(context).pop(),
-                          child: const Text('Back'),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
