@@ -5,7 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:game_template/src/play_session/board.dart';
+import 'package:game_template/src/play_session/game_board.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart' hide Level;
 import 'package:provider/provider.dart';
@@ -69,7 +69,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                               semanticLabel: 'Settings',
                             ),
                           ),
-                          Text("Player vs AI"),
+                          Text("Connect Five"),
                           InkResponse(
                             onTap: () =>
                                 GoRouter.of(context).push('/settings'),
@@ -82,7 +82,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                       ),
                     ),
                     Spacer(),
-                    Board(),
+                    GameBoard(),
                     Spacer(),
                   ],
                 ),
