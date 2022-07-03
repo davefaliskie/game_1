@@ -74,8 +74,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                           ),
                           Text("Connect Five"),
                           InkResponse(
-                            onTap: () =>
-                                GoRouter.of(context).push('/settings'),
+                            onTap: () => GoRouter.of(context).push('/settings'),
                             child: Image.asset(
                               'assets/images/settings.png',
                               semanticLabel: 'Settings',
@@ -86,6 +85,11 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                     ),
                     Spacer(),
                     GameBoard(boardSetting: boardSetting),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.settings_backup_restore),
+                    ),
+                    Text("Reset"),
                     Spacer(),
                   ],
                 ),

@@ -13,6 +13,11 @@ class GameBoard extends StatefulWidget {
 
 class _GameBoardState extends State<GameBoard> {
   @override
+  void didUpdateWidget(covariant GameBoard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 400,
@@ -27,7 +32,6 @@ class _GameBoardState extends State<GameBoard> {
               ],
             ),
           ),
-          Text("Make Your Move"),
         ],
       ),
     );
