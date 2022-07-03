@@ -28,7 +28,7 @@ class _GameBoardState extends State<GameBoard> {
               crossAxisCount: widget.boardSetting.cols,
               children: [
                 for (var i = 0; i < widget.boardSetting.totalTiles(); i++)
-                  BoardTile(position: widget.boardSetting.tilePosition(i)),
+                  BoardTile(boardIndex: i, boardSetting: widget.boardSetting),
               ],
             ),
           ),

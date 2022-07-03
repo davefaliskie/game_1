@@ -1,48 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:game_template/src/game_internals/board_setting.dart';
 import 'package:logging/logging.dart';
+import 'package:provider/provider.dart';
 
-enum TileState { blank, player, ai }
+import '../game_internals/board_state.dart';
+import '../game_internals/tile_state.dart';
 
 class BoardTile extends StatefulWidget {
-  final List position;
-  static final Logger _log = Logger('_BoardTile');
+  final int boardIndex;
+  final BoardSetting boardSetting;
 
-  const BoardTile({super.key, required this.position});
+  const BoardTile({super.key, required this.boardIndex, required this.boardSetting});
 
   @override
   State<BoardTile> createState() => _BoardTileState();
 }
 
 class _BoardTileState extends State<BoardTile> {
-  TileState _tileState = TileState.blank;
+  List? coordinates;
+
+  @override
+  void initState() {
+    super.initState();
+    coordinates = TileState(widget.boardSetting, widget.boardIndex).coordinates();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final tileState = TileState(widget.boardSetting, widget.boardIndex);
+
     return InkResponse(
       onTap: () {
-        print("${widget.position} was clicked");
-        setState(() {
-          _tileState = TileState.player;
-        });
+        Provider.of<BoardState>(context, listen: false).makeMove(tileState.coordinates());
       },
       child: Padding(
         padding: const EdgeInsets.all(2.0),
-        child: Container(
-          color: tileColor(_tileState),
-          child: Center(child: Text("${widget.position}")),
+        child: Consumer<BoardState>(
+          builder: (context, bordState, child) {
+            return Container(
+              color: bordState.tileColor(tileState.coordinates()),
+              child: Center(child: Text("${tileState.coordinates()}")),
+            );
+          }
         ),
       ),
     );
-  }
-
-  Color tileColor(TileState tileState) {
-    switch (tileState) {
-      case TileState.blank:
-        return Colors.white;
-      case TileState.player:
-        return Colors.amber;
-      case TileState.ai:
-        return Colors.redAccent;
-    }
   }
 }

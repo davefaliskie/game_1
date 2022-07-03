@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import '../ads/ads_controller.dart';
 import '../audio/audio_controller.dart';
 import '../audio/sounds.dart';
+import '../game_internals/board_state.dart';
 import '../games_services/games_services.dart';
 import '../games_services/score.dart';
 import '../in_app_purchase/in_app_purchase.dart';
@@ -42,69 +43,87 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
 
   late DateTime _startOfPlay;
 
+  //TODO move the board settings to be defined by the level.
   final BoardSetting boardSetting = BoardSetting(cols: 7, rows: 5);
 
   @override
   Widget build(BuildContext context) {
     final palette = context.watch<Palette>();
 
-    return IgnorePointer(
-      ignoring: _duringCelebration,
-      child: Scaffold(
-        backgroundColor: palette.backgroundPlaySession,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Center(
-                // This is the entirety of the "game".
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkResponse(
-                            onTap: () => GoRouter.of(context).pop(),
-                            child: Image.asset(
-                              'assets/images/back.png',
-                              semanticLabel: 'Settings',
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => BoardState()),
+      ],
+      child: IgnorePointer(
+        ignoring: _duringCelebration,
+        child: Scaffold(
+          backgroundColor: palette.backgroundPlaySession,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Center(
+                  // This is the entirety of the "game".
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkResponse(
+                              onTap: () => GoRouter.of(context).pop(),
+                              child: Image.asset(
+                                'assets/images/back.png',
+                                semanticLabel: 'Settings',
+                              ),
                             ),
-                          ),
-                          Text("Connect Five"),
-                          InkResponse(
-                            onTap: () => GoRouter.of(context).push('/settings'),
-                            child: Image.asset(
-                              'assets/images/settings.png',
-                              semanticLabel: 'Settings',
+                            Text("Connect Five"),
+                            InkResponse(
+                              onTap: () =>
+                                  GoRouter.of(context).push('/settings'),
+                              child: Image.asset(
+                                'assets/images/settings.png',
+                                semanticLabel: 'Settings',
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Spacer(),
-                    GameBoard(boardSetting: boardSetting),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.settings_backup_restore),
-                    ),
-                    Text("Reset"),
-                    Spacer(),
-                  ],
+                      Spacer(),
+                      GameBoard(boardSetting: boardSetting),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.settings_backup_restore),
+                      ),
+                      Text("Reset"),
+                      Consumer<BoardState>(
+                          builder: (context, bordState, child) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Player: ${bordState.playerTaken}'),
+                                Text('Ai: ${bordState.aiTaken}'),
+                              ],
+                            );
+                          }
+                      ),
+                      Spacer(),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox.expand(
-                child: Visibility(
-                  visible: _duringCelebration,
-                  child: IgnorePointer(
-                    child: Confetti(
-                      isStopped: !_duringCelebration,
+                SizedBox.expand(
+                  child: Visibility(
+                    visible: _duringCelebration,
+                    child: IgnorePointer(
+                      child: Confetti(
+                        isStopped: !_duringCelebration,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
