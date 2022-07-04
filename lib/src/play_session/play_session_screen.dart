@@ -52,7 +52,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => BoardState()),
+        ChangeNotifierProvider(create: (context) => BoardState(boardSetting: boardSetting)),
       ],
       child: IgnorePointer(
         ignoring: _duringCelebration,
@@ -111,8 +111,8 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Player: ${bordState.playerTaken}'),
-                              Text('Ai: ${bordState.aiTaken}'),
+                              Text('Player: ${bordState.playerTaken.map((c) => c.asList())}'),
+                              Text('Ai: ${bordState.aiTaken.map((c) => c.asList())}'),
                             ],
                           );
                         }),
