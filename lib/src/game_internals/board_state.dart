@@ -14,12 +14,24 @@ class BoardState extends ChangeNotifier {
   // the current state of the board will be determined by these two lists.
   final List<Tile> playerTaken = [];
   final List<Tile> aiTaken = [];
+  List<Tile> winTiles = [];
+
+  final ChangeNotifier playerWon = ChangeNotifier();
 
   BoardState({required this.boardSetting});
 
+  // reset the board to the blank state
+  void clearBoard() {
+    playerTaken.clear();
+    aiTaken.clear();
+    notifyListeners();
+  }
+
   // set the tile color based on the given tile's coordinates
   Color tileColor(Tile tile) {
-    if (getTileOwner(tile) == TileOwner.player) {
+    if (winTiles.contains(tile)) {
+      return Colors.yellow;
+    } else if (getTileOwner(tile) == TileOwner.player) {
       return Colors.amber;
     } else if (getTileOwner(tile) == TileOwner.ai) {
       return Colors.redAccent;
@@ -37,9 +49,18 @@ class BoardState extends ChangeNotifier {
     }
     playerTaken.add(newTileCord);
 
-    // TODO check if won
+    // check if player won
+    bool didWin = checkWin(newTileCord);
+    print("DID PLAYER WIN? $didWin");
+    if (didWin == true) {
+      playerWon.notifyListeners();
+      notifyListeners();
+      return;
+    }
 
+    // TODO add a slight delay and lock the board.
     makeAiMove();
+    // TODO check if AI won.
     notifyListeners();
   }
 
@@ -77,13 +98,6 @@ class BoardState extends ChangeNotifier {
     aiTaken.add(aiCord);
   }
 
-  // reset the board to the blank state
-  void clearBoard() {
-    playerTaken.clear();
-    aiTaken.clear();
-    notifyListeners();
-  }
-
   TileOwner getTileOwner(Tile tile) {
     if (playerTaken.contains(tile)) {
       return TileOwner.player;
@@ -92,5 +106,48 @@ class BoardState extends ChangeNotifier {
     } else {
       return TileOwner.blank;
     }
+  }
+
+  // checks for win and add winning tiles to winTiles.
+  // returns true if the playTile caused a win.
+  bool checkWin(Tile playTile) {
+    var takenTiles = (getTileOwner(playTile) == TileOwner.player) ? playerTaken : aiTaken;
+
+    // check vertical
+    List<Tile>? vertical = verticalCheck(playTile, takenTiles);
+    if (vertical != null) {
+      winTiles = vertical;
+      return true;
+    }
+
+    // TODO check horizontal
+
+    // TODO check left diagonal
+
+    // TODO check right diagonal
+
+    return false;
+  }
+
+  List<Tile>? verticalCheck(Tile playTile, List<Tile> takenTiles) {
+    List<Tile> tempWinTiles = [];
+
+    // test only vertical wins, start at playTile row and move down.
+    for (var row = playTile.row; row > 0; row--) {
+      Tile tile = Tile(col: playTile.col, row: row);
+
+      if (takenTiles.contains(tile)) {
+        tempWinTiles.add(tile);
+      } else {
+        break;
+      }
+    }
+
+    // see if tempWinTiles meets the win condition, if so it's a win
+    if (tempWinTiles.length >= boardSetting.winCondition) {
+      return tempWinTiles;
+    }
+
+    return null;
   }
 }
