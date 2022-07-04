@@ -120,7 +120,12 @@ class BoardState extends ChangeNotifier {
       return true;
     }
 
-    // TODO check horizontal
+    // check horizontal
+    List<Tile>? horizontal = horizontalCheck(playTile, takenTiles);
+    if (horizontal != null) {
+      winTiles = horizontal;
+      return true;
+    }
 
     // TODO check left diagonal
 
@@ -140,6 +145,46 @@ class BoardState extends ChangeNotifier {
         tempWinTiles.add(tile);
       } else {
         break;
+      }
+    }
+
+    // see if tempWinTiles meets the win condition, if so it's a win
+    if (tempWinTiles.length >= boardSetting.winCondition) {
+      return tempWinTiles;
+    }
+
+    return null;
+  }
+
+  List<Tile>? horizontalCheck(Tile playTile, List<Tile> takenTiles) {
+    // add the play tile to the list
+    List<Tile> tempWinTiles = [playTile];
+
+    // Look left, unless playTile is the first tile.
+    // Start at playTile.col - 1
+    if (playTile.col > 1) {
+      for (var col = playTile.col - 1; col > 0; col--) {
+        Tile tile = Tile(col: col, row: playTile.row);
+
+        if (takenTiles.contains(tile)) {
+          tempWinTiles.add(tile);
+        } else {
+          break;
+        }
+      }
+    }
+
+    // Look right, unless playTile is the last tile.
+    // Start at playTile.col + 1
+    if (playTile.col < boardSetting.cols) {
+      for (var col = playTile.col + 1; col < boardSetting.cols + 1; col++) {
+        Tile tile = Tile(col: col, row: playTile.row);
+
+        if (takenTiles.contains(tile)) {
+          tempWinTiles.add(tile);
+        } else {
+          break;
+        }
       }
     }
 
