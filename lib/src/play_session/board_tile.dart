@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:game_template/src/game_internals/board_setting.dart';
-import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
 import '../game_internals/board_state.dart';
@@ -19,7 +18,7 @@ class BoardTile extends StatefulWidget {
 class _BoardTileState extends State<BoardTile> {
   @override
   Widget build(BuildContext context) {
-    final tile = Tile(widget.boardSetting, widget.boardIndex);
+    final tile = Tile.fromBoardIndex(widget.boardIndex, widget.boardSetting);
 
     return InkResponse(
       onTap: () {
@@ -30,8 +29,8 @@ class _BoardTileState extends State<BoardTile> {
         child: Consumer<BoardState>(
           builder: (context, bordState, child) {
             return Container(
-              color: bordState.tileColor(tile.coordinate()),
-              child: Center(child: Text("${tile.coordinate().asList()}")),
+              color: bordState.tileColor(tile),
+              child: Center(child: Text(tile.toString())),
             );
           }
         ),

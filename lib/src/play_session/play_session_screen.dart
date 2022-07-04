@@ -111,8 +111,8 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Player: ${bordState.playerTaken.map((c) => c.asList())}'),
-                              Text('Ai: ${bordState.aiTaken.map((c) => c.asList())}'),
+                              Text('Player: ${bordState.playerTaken}'),
+                              Text('Ai: ${bordState.aiTaken}'),
                             ],
                           );
                         }),

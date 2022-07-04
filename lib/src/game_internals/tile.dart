@@ -1,21 +1,25 @@
 import 'package:game_template/src/game_internals/board_setting.dart';
-import 'package:game_template/src/game_internals/coordinate.dart';
 
 class Tile {
-  final BoardSetting boardSetting;
-  final int boardIndex;
+  final int col; // x
+  final int row; // y
 
-  Tile(this.boardSetting, this.boardIndex);
+  Tile({required this.col, required this.row});
 
-  int row() {
-    return boardSetting.rows - ((boardIndex + 1) / boardSetting.cols).ceil() + 1;
+  factory Tile.fromBoardIndex(int boardIndex, BoardSetting setting) {
+    final col = (boardIndex % setting.cols).ceil() + 1;
+    final row = setting.rows - ((boardIndex + 1) / setting.cols).ceil() + 1;
+    return Tile(col: col, row: row);
   }
 
-  int col() {
-    return (boardIndex % boardSetting.cols).ceil() + 1;
+  @override
+  int get hashCode => Object.hash(col, row);
+
+  @override
+  bool operator ==(Object other) {
+    return other is Tile && other.col == col && other.row == row;
   }
 
-  Coordinate coordinate() {
-    return Coordinate(row: row(), col: col());
-  }
+  @override
+  String toString() => '[$col,$row]';
 }
