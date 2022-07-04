@@ -61,57 +61,66 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
           body: SafeArea(
             child: Stack(
               children: [
-                Center(
-                  // This is the entirety of the "game".
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkResponse(
-                              onTap: () => GoRouter.of(context).pop(),
-                              child: Image.asset(
-                                'assets/images/back.png',
-                                semanticLabel: 'Settings',
+                //NOTE: this builder is needed so we can have a new context to use
+                //provider w/. TODO: update it to a buildListener for player type?
+                Builder(builder: (context) {
+                  return Center(
+                    // This is the entirety of the "game".
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              InkResponse(
+                                onTap: () => GoRouter.of(context).pop(),
+                                child: Image.asset(
+                                  'assets/images/back.png',
+                                  semanticLabel: 'Settings',
+                                ),
                               ),
-                            ),
-                            Text("Connect Five"),
-                            InkResponse(
-                              onTap: () =>
-                                  GoRouter.of(context).push('/settings'),
-                              child: Image.asset(
-                                'assets/images/settings.png',
-                                semanticLabel: 'Settings',
+                              Text("Connect Five"),
+                              InkResponse(
+                                onTap: () =>
+                                    GoRouter.of(context).push('/settings'),
+                                child: Image.asset(
+                                  'assets/images/settings.png',
+                                  semanticLabel: 'Settings',
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Spacer(),
-                      GameBoard(boardSetting: boardSetting),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.settings_backup_restore),
-                      ),
-                      Text("Reset"),
-                      Consumer<BoardState>(
-                          builder: (context, bordState, child) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Player: ${bordState.playerTaken}'),
-                                Text('Ai: ${bordState.aiTaken}'),
-                              ],
-                            );
-                          }
-                      ),
-                      Spacer(),
-                    ],
-                  ),
-                ),
+                        Spacer(),
+                        GameBoard(boardSetting: boardSetting),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            context.read<BoardState>().clearBoard();
+                          },
+                          icon: Icon(
+                            Icons.settings_backup_restore_rounded,
+                            size: 24.0,
+                          ),
+                          label: Text("Reset"),
+                        ),
+                        Spacer(),
+                        Consumer<BoardState>(
+                            builder: (context, bordState, child) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Player: ${bordState.playerTaken}'),
+                              Text('Ai: ${bordState.aiTaken}'),
+                            ],
+                          );
+                        }),
+                        Spacer(),
+                      ],
+                    ),
+                  );
+                }),
                 SizedBox.expand(
                   child: Visibility(
                     visible: _duringCelebration,

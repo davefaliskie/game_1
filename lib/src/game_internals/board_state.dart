@@ -26,4 +26,11 @@ class BoardState extends ChangeNotifier {
     playerTaken.add(coordinates);
     notifyListeners();
   }
+
+  // reset the board to the blank state
+  void clearBoard() {
+    playerTaken.clear();
+    aiTaken.clear();
+    notifyListeners();
+  }
 }
