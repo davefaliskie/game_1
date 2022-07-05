@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:game_template/src/game_internals/board_setting.dart';
 import 'package:game_template/src/game_internals/tile.dart';
 
+import '../style/palette.dart';
+
 enum TileOwner {
   blank,
   player,
@@ -41,18 +43,18 @@ class BoardState extends ChangeNotifier {
   // set the tile color based on the given tile's coordinates
   Color tileColor(Tile tile) {
     if (winTiles.contains(tile)) {
-      return Colors.yellow;
+      return Colors.lightGreen;
     } else if (getTileOwner(tile) == TileOwner.player) {
       return Colors.amber;
     } else if (getTileOwner(tile) == TileOwner.ai) {
       return Colors.redAccent;
     } else {
-      return Colors.lightGreenAccent;
+      return Palette().backgroundPlaySession;
     }
   }
 
   // the action called when a tile is clicked.
-  void makeMove(Tile tile) async {
+  Future<void> makeMove(Tile tile) async {
     assert(!_isLocked);
     Tile? newTileCord = evaluateMove(tile);
     if (newTileCord == null) {

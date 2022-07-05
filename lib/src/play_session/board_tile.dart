@@ -9,7 +9,8 @@ class BoardTile extends StatefulWidget {
   final int boardIndex;
   final BoardSetting boardSetting;
 
-  const BoardTile({super.key, required this.boardIndex, required this.boardSetting});
+  const BoardTile(
+      {super.key, required this.boardIndex, required this.boardSetting});
 
   @override
   State<BoardTile> createState() => _BoardTileState();
@@ -25,14 +26,20 @@ class _BoardTileState extends State<BoardTile> {
         Provider.of<BoardState>(context, listen: false).makeMove(tile);
       },
       child: Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Consumer<BoardState>(
-          builder: (context, bordState, child) {
+        padding: const EdgeInsets.all(1.0),
+        child: Container(
+          color: Colors.blue,
+          child: Consumer<BoardState>(builder: (context, bordState, child) {
             return Container(
-              color: bordState.tileColor(tile),
-              child: Center(child: Text(tile.toString())),
+              margin: EdgeInsets.all(3.0),
+              decoration: BoxDecoration(
+                color: bordState.tileColor(tile),
+                shape: BoxShape.circle,
+              ),
+              // child: Center(child: Text(tile.toString())),
+              child: Container()
             );
-          }
+          }),
         ),
       ),
     );
