@@ -85,7 +85,13 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                                   semanticLabel: 'Settings',
                                 ),
                               ),
-                              Text("Connect Five"),
+                              Text(
+                                "Connect Four",
+                                style: TextStyle(
+                                  fontFamily: 'Permanent Marker',
+                                  fontSize: 25,
+                                ),
+                              ),
                               InkResponse(
                                 onTap: () =>
                                     GoRouter.of(context).push('/settings'),
@@ -114,16 +120,16 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                           label: Text("Reset"),
                         ),
                         Spacer(),
-                        Consumer<BoardState>(
-                            builder: (context, bordState, child) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Player: ${bordState.playerTaken}'),
-                              Text('Ai: ${bordState.aiTaken}'),
-                            ],
-                          );
-                        }),
+                        // Consumer<BoardState>(
+                        //     builder: (context, bordState, child) {
+                        //   return Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Text('Player: ${bordState.playerTaken}'),
+                        //       Text('Ai: ${bordState.aiTaken}'),
+                        //     ],
+                        //   );
+                        // }),
                         Spacer(),
                       ],
                     ),
