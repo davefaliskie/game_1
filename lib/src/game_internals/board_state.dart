@@ -17,6 +17,9 @@ class BoardState extends ChangeNotifier {
   List<Tile> winTiles = [];
 
   final ChangeNotifier playerWon = ChangeNotifier();
+  final ChangeNotifier aiWon = ChangeNotifier();
+
+  String noticeMessage = "";
 
   BoardState({required this.boardSetting});
 
@@ -24,6 +27,8 @@ class BoardState extends ChangeNotifier {
   void clearBoard() {
     playerTaken.clear();
     aiTaken.clear();
+    winTiles.clear();
+    noticeMessage = "";
     notifyListeners();
   }
 
@@ -44,14 +49,15 @@ class BoardState extends ChangeNotifier {
   void makeMove(Tile tile) {
     Tile? newTileCord = evaluateMove(tile);
     if (newTileCord == null) {
-      //TODO give feedback that the choice can't work
+      noticeMessage = "Move not possible, try again";
+      notifyListeners();
       return;
     }
+    noticeMessage = "";
     playerTaken.add(newTileCord);
 
     // check if player won
     bool didWin = checkWin(newTileCord);
-    print("DID PLAYER WIN? $didWin");
     if (didWin == true) {
       playerWon.notifyListeners();
       notifyListeners();
@@ -59,7 +65,17 @@ class BoardState extends ChangeNotifier {
     }
 
     // TODO add a slight delay and lock the board.
-    // makeAiMove();
+    Tile? newAiTile = makeAiMove();
+    if (newAiTile != null) {
+      // check if AI won
+      bool didAiWin = checkWin(newAiTile);
+      if (didAiWin == true) {
+        noticeMessage = "You lost, reset to try again";
+        notifyListeners();
+        return;
+      }
+    }
+
     // TODO check if AI won.
     notifyListeners();
   }
@@ -70,32 +86,33 @@ class BoardState extends ChangeNotifier {
   Tile? evaluateMove(Tile tile) {
     //loop over number of rows and find the lowest blank row in the column
     for (var bRow = 1; bRow < boardSetting.rows + 1; bRow++) {
-      var evalCord = Tile(col: tile.col, row: bRow);
-      if (getTileOwner(evalCord) == TileOwner.blank) {
-        return evalCord;
+      var evalTile = Tile(col: tile.col, row: bRow);
+      if (getTileOwner(evalTile) == TileOwner.blank) {
+        return evalTile;
       }
     }
     return null;
   }
 
-  void makeAiMove() {
+  Tile? makeAiMove() {
     // Get all the Coordinates that are available and pick a random one.
     List<Tile> available = [];
     for (var row = 1; row < boardSetting.rows + 1; row++) {
       for (var col = 1; col < boardSetting.cols + 1; col++) {
-        Tile cord = Tile(col: col, row: row);
-        if (getTileOwner(cord) == TileOwner.blank) {
-          available.add(cord);
+        Tile tile = Tile(col: col, row: row);
+        if (getTileOwner(tile) == TileOwner.blank) {
+          available.add(tile);
         }
       }
     }
 
-    if (available.isEmpty) { return; }
+    if (available.isEmpty) { return null; }
 
     // We know the Coordinate will be available because we already checked.
     // this is making sure it's at the bottom of the column.
-    Tile aiCord = evaluateMove(available[Random().nextInt(available.length)])!;
-    aiTaken.add(aiCord);
+    Tile aiTile = evaluateMove(available[Random().nextInt(available.length)])!;
+    aiTaken.add(aiTile);
+    return aiTile;
   }
 
   TileOwner getTileOwner(Tile tile) {

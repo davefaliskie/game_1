@@ -99,6 +99,10 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                         ),
                         Spacer(),
                         GameBoard(boardSetting: boardSetting),
+                        Consumer<BoardState>(
+                            builder: (context, bordState, child) {
+                          return Text(bordState.noticeMessage);
+                        }),
                         ElevatedButton.icon(
                           onPressed: () {
                             context.read<BoardState>().clearBoard();
