@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:game_template/src/game_internals/board_setting.dart';
@@ -20,8 +21,12 @@ class BoardState extends ChangeNotifier {
   final ChangeNotifier aiWon = ChangeNotifier();
 
   String noticeMessage = "";
+  bool _isLocked = false;
 
   BoardState({required this.boardSetting});
+
+  /// This is `true` if the board game is locked for the player.
+  bool get isLocked => _isLocked;
 
   // reset the board to the blank state
   void clearBoard() {
@@ -29,6 +34,7 @@ class BoardState extends ChangeNotifier {
     aiTaken.clear();
     winTiles.clear();
     noticeMessage = "";
+    _isLocked = true;
     notifyListeners();
   }
 
@@ -46,7 +52,8 @@ class BoardState extends ChangeNotifier {
   }
 
   // the action called when a tile is clicked.
-  void makeMove(Tile tile) {
+  void makeMove(Tile tile) async {
+    assert(!_isLocked);
     Tile? newTileCord = evaluateMove(tile);
     if (newTileCord == null) {
       noticeMessage = "Move not possible, try again";
@@ -55,6 +62,7 @@ class BoardState extends ChangeNotifier {
     }
     noticeMessage = "";
     playerTaken.add(newTileCord);
+    _isLocked = true;
 
     // check if player won
     bool didWin = checkWin(newTileCord);
@@ -63,8 +71,11 @@ class BoardState extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    notifyListeners();
 
-    // TODO add a slight delay and lock the board.
+    // add a delay before AI moves
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+
     Tile? newAiTile = makeAiMove();
     if (newAiTile != null) {
       // check if AI won
@@ -76,7 +87,7 @@ class BoardState extends ChangeNotifier {
       }
     }
 
-    // TODO check if AI won.
+    _isLocked = false;
     notifyListeners();
   }
 
