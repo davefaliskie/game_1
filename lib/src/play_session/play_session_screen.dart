@@ -79,7 +79,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               InkResponse(
-                                onTap: () => GoRouter.of(context).pop(),
+                                onTap: () => GoRouter.of(context).go('/'),
                                 child: Image.asset(
                                   'assets/images/back.png',
                                   semanticLabel: 'Settings',
