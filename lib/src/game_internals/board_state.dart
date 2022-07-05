@@ -59,7 +59,7 @@ class BoardState extends ChangeNotifier {
     }
 
     // TODO add a slight delay and lock the board.
-    makeAiMove();
+    // makeAiMove();
     // TODO check if AI won.
     notifyListeners();
   }
@@ -113,23 +113,29 @@ class BoardState extends ChangeNotifier {
   bool checkWin(Tile playTile) {
     var takenTiles = (getTileOwner(playTile) == TileOwner.player) ? playerTaken : aiTaken;
 
-    // check vertical
     List<Tile>? vertical = verticalCheck(playTile, takenTiles);
     if (vertical != null) {
       winTiles = vertical;
       return true;
     }
 
-    // check horizontal
     List<Tile>? horizontal = horizontalCheck(playTile, takenTiles);
     if (horizontal != null) {
       winTiles = horizontal;
       return true;
     }
 
-    // TODO check left diagonal
+    List<Tile>? forwardDiagonal = forwardDiagonalCheck(playTile, takenTiles);
+    if (forwardDiagonal != null) {
+      winTiles = forwardDiagonal;
+      return true;
+    }
 
-    // TODO check right diagonal
+    List<Tile>? backDiagonal = backDiagonalCheck(playTile, takenTiles);
+    if (backDiagonal != null) {
+      winTiles = backDiagonal;
+      return true;
+    }
 
     return false;
   }
@@ -195,4 +201,87 @@ class BoardState extends ChangeNotifier {
 
     return null;
   }
+
+  List<Tile>? forwardDiagonalCheck(Tile playTile, List<Tile> takenTiles) {
+    // add the play tile to the list
+    List<Tile> tempWinTiles = [playTile];
+
+    // Look left & down, unless playTile is the first tile or in row 1.
+    // Start at playTile.col - 1
+    if (playTile.col > 1 && playTile.row > 1) {
+      // iterate to check all lower rows
+      for (var i = 1; i < playTile.row + 1; i++) {
+        Tile tile = Tile(col: playTile.col - i, row: playTile.row - i);
+
+        if (takenTiles.contains(tile)) {
+          tempWinTiles.add(tile);
+        } else {
+          break;
+        }
+      }
+    }
+
+    // Look right & up, unless playTile is the last tile or in top row.
+    // Start at playTile.col - 1
+    if (playTile.col < boardSetting.cols && playTile.row < boardSetting.rows) {
+      // iterate to check all upper rows. loop until hitting the top.
+      // so from (top - playTile.row) times.
+      for (var i = 1; i < (boardSetting.rows + 1) - playTile.row; i++) {
+        Tile tile = Tile(col: playTile.col + i, row: playTile.row + i);
+        if (takenTiles.contains(tile)) {
+          tempWinTiles.add(tile);
+        } else {
+          break;
+        }
+      }
+    }
+
+    // see if tempWinTiles meets the win condition, if so it's a win
+    if (tempWinTiles.length >= boardSetting.winCondition) {
+      return tempWinTiles;
+    }
+
+    return null;
+  }
+
+  List<Tile>? backDiagonalCheck(Tile playTile, List<Tile> takenTiles) {
+    // add the play tile to the list
+    List<Tile> tempWinTiles = [playTile];
+
+    // Look left & up, unless playTile is the first tile or in top row.
+    if (playTile.col > 1 && playTile.row < boardSetting.rows) {
+      // iterate to check all upper rows
+      for (var i = 1; i < (boardSetting.rows + 1) - playTile.row; i++) {
+        Tile tile = Tile(col: playTile.col - i, row: playTile.row + i);
+
+        if (takenTiles.contains(tile)) {
+          tempWinTiles.add(tile);
+        } else {
+          break;
+        }
+      }
+    }
+
+    // Look right & down, unless playTile is the last tile or bottom row.
+    if (playTile.col < boardSetting.cols && playTile.row > 1) {
+      // iterate to check all lower rows. loop until hitting the bottom.
+      for (var i = 1; i < playTile.row + 1; i++) {
+        Tile tile = Tile(col: playTile.col + i, row: playTile.row - i);
+        if (takenTiles.contains(tile)) {
+          tempWinTiles.add(tile);
+        } else {
+          break;
+        }
+      }
+    }
+
+    // see if tempWinTiles meets the win condition, if so it's a win
+    if (tempWinTiles.length >= boardSetting.winCondition) {
+      return tempWinTiles;
+    }
+
+    return null;
+  }
+
+
 }
