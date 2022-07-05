@@ -36,7 +36,7 @@ class BoardState extends ChangeNotifier {
     aiTaken.clear();
     winTiles.clear();
     noticeMessage = "";
-    _isLocked = true;
+    _isLocked = false;
     notifyListeners();
   }
 
